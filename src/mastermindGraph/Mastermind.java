@@ -7,14 +7,34 @@ import java.util.ArrayList;
 
 import ch.aplu.jgamegrid.*;
 
+/**
+ * La classe Mastermind permet de représenter une partie de mastermind. Elle
+ * hérite de la classe GameGrid qui fait partis de la librairie JgameGrid. Elle
+ * est disponible sur le site de son créateur
+ * <a href="http://www.aplu.ch/home/apluhomex.jsp?site=45"> http://www.aplu.ch
+ * </a>
+ * 
+ * Elle implémente également l'interface GGMouseListenenr de la même librairie.
+ * 
+ * @author Matteo B. & Olga K.
+ *
+ */
 public class Mastermind extends GameGrid implements GGMouseTouchListener {
 	private int nbCache, nbCoul, line;
 	private Pion[] rep;
-	private Pion[][] history;
 	private int[] sol;
 	private Actor btEval;
 	private boolean isFinished;
 
+	/**
+	 * Construit un objet Mastermind en fonction de nombre de pions qui sont
+	 * cachés. /!\ attention à cause de nos resources graphiques (images) ce
+	 * nombre ne dois pas dépasser 6. En construisant une partie on crée
+	 * également un interface de jeu.
+	 * 
+	 * @param nbCache
+	 *            le nombre de pions qui sont cachés
+	 */
 	public Mastermind(int nbCache) {
 		super(nbCache + 3, 12, 60, null, false);
 		this.setBgColor(222, 184, 135);
@@ -23,12 +43,16 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		this.nbCoul = nbCache + 2;
 		this.rep = new Pion[nbCache];
 		this.sol = new int[nbCache];
-		this.history = new Pion[this.getNbVertCells() - 2][nbCache];
 		show();
 		initGame();
 		doRun();
 	}
 
+	/**
+	 * Initialise le jeu en suprimant tout les acteurs présents sur l'interface
+	 * de jeu et en initialisant les comandes ainsi qu'en crant une nouvelle
+	 * combinaison mystère.
+	 */
 	public void initGame() {
 		removeAllActors();
 		creatCombination();
@@ -38,13 +62,18 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		getBg().clear();
 	}
 
+	/**
+	 * Crée une nouvelle combinaison mystère
+	 */
 	private void creatCombination() {
 		for (int i = 0; i < sol.length; i++) {
 			sol[i] = (int) (Math.random() * nbCoul);
-			System.out.println(sol[i]);
 		}
 	}
 
+	/**
+	 * Crée un nouvel interface de commande
+	 */
 	private void creatCommand() {
 		for (int i = 0; i < rep.length; i++) {
 			rep[i] = new Pion(nbCoul);
@@ -56,6 +85,14 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		btEval.addMouseTouchListener(this, GGMouse.lPress);
 	}
 
+	/**
+	 * Termine la partie en affaichant si elle est gagnée ou perdue et dévoile
+	 * la combinaison mystère.
+	 * 
+	 * @param raison
+	 *            un string contenant la raison de fin de la partie qui sera
+	 *            affichée.
+	 */
 	public void finPartie(String raison) {
 		Font msg = new Font("verdana", Font.PLAIN, 30);
 		getBg().setPaintColor(Color.red);
@@ -65,17 +102,24 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		showSol();
 		nouvelPartie();
 	}
-	
-	public void nouvelPartie(){
+
+	/**
+	 * Suprimme les commandes de jeu et fait apparaître un bouton pour rejouer.
+	 */
+	public void nouvelPartie() {
 		BtNouv nouvPartie = new BtNouv();
-		for (int i =0; i<this.getNbHorzCells();i++){
-			removeActorsAt(new Location(i,this.getNbVertCells()-1));
+		for (int i = 0; i < this.getNbHorzCells(); i++) {
+			removeActorsAt(new Location(i, this.getNbVertCells() - 1));
 		}
-		addActor(nouvPartie, new Location(1,this.getNbVertCells()-1));
+		addActor(nouvPartie, new Location(1, this.getNbVertCells() - 1));
 		nouvPartie.addMouseTouchListener(this, GGMouse.lPress);
-		
+
 	}
 
+	/**
+	 * Evalue si la combinaison soumises est juste ou pas et l'affice dans
+	 * l'historique avec les indices.
+	 */
 	public void evalCombination() {
 		int[] repInt = new int[nbCache];
 		ArrayList<Integer> solb = new ArrayList<Integer>();
@@ -115,10 +159,18 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		}
 
 		if (!isFinished) {
-			
+
 		}
 	}
 
+	/**
+	 * Affiche les indices blancs et noirs
+	 * 
+	 * @param in
+	 *            le nombre d'indices noires à afficher
+	 * @param ib
+	 *            le nombre d'indices blancs à afficher
+	 */
 	public void showIndices(int in, int ib) {
 		int ti = in + ib;
 
@@ -137,6 +189,9 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		}
 	}
 
+	/**
+	 * Affiche la combinaison soumise.
+	 */
 	public void showCombination() {
 		int[] repInt = new int[nbCache];
 		for (int i = 0; i < rep.length; i++) {
@@ -147,19 +202,29 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 		}
 	}
 
+	/**
+	 * Affiche la combinaison mystère
+	 */
 	public void showSol() {
 		for (int i = 0; i < sol.length; i++) {
 			Pion pionS = new Pion(nbCoul);
-			addActor(pionS, new Location(2+i,0));
+			addActor(pionS, new Location(2 + i, 0));
 			pionS.show(sol[i]);
 		}
 	}
 
+	/*
+	 * @see
+	 * ch.aplu.jgamegrid.GGMouseTouchListener#mouseTouched(ch.aplu.jgamegrid.
+	 * Actor, ch.aplu.jgamegrid.GGMouse, java.awt.Point)
+	 * 
+	 * Permet la gestion de la souris dans le GameGrid
+	 */
 	@Override
 	public void mouseTouched(Actor arg0, GGMouse mouse, Point arg2) {
 		Location loc = toLocation(mouse.getX(), mouse.getY());
 
-		if (!isFinished){
+		if (!isFinished) {
 			if (arg0.getClass().getName().equals("mastermindGraph.BtEval")) {
 				evalCombination();
 			}
@@ -168,12 +233,16 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 				if (mouse.getEvent() == GGMouse.lPress) {
 					arg0.showNextSprite();
 				}
-				else {
+
+				else if (mouse.getEvent() == GGMouse.rPress) { // pour une
+																// raison
+																// obscure ne
+																// semble pas
+																// marcher ....
 					arg0.showPreviousSprite();
 				}
 			}
-		}
-		else{
+		} else {
 			if (arg0.getClass().getName().equals("mastermindGraph.BtNouv")) {
 				initGame();
 			}
@@ -182,7 +251,6 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 
 	public static void main(String[] args) {
 		new ChoixNiv();
-		
 
 	}
 }
