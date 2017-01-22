@@ -16,7 +16,7 @@ public class Mastermind extends GameGrid implements GGMouseTouchListener {
 	private boolean isFinished;
 
 	public Mastermind(int nbCache) {
-		super(nbCache + 3, 12, 60, RED, false);
+		super(nbCache + 3, 12, 60, null, false);
 		this.setBgColor(222, 184, 135);
 		this.setTitle("MasterMind");
 		this.nbCache = nbCache;
